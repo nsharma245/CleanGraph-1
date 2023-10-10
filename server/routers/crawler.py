@@ -75,6 +75,7 @@ async def crawler(crawler : crawler_model.CreateCrawler):
             for unit_info in course_structure:
                 for key, value in unit_info.items():
                     formatted_info += f"{key.strip()}: {value.strip()}\n"
+                formatted_info += f"\nCourse Structure of {course_name}\n"
             return formatted_info
 
         else:
