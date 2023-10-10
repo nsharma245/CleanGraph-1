@@ -4,7 +4,7 @@ from loguru import logger
 from starlette.middleware.base import BaseHTTPMiddleware
 import sys
 
-from routers import plugin, graph, errors, suggestions
+from routers import plugin, graph, errors, suggestions, crawler 
 
 
 class LoguruMiddleware(BaseHTTPMiddleware):
@@ -50,7 +50,7 @@ def set_logger():
 set_logger()
 
 
-origins = ["http://localhost:3000", "localhost:3000"]
+origins = ["http://localhost:3000", "localhost:3000", "localhost:3001", "http://localhost:3001"]
 
 app = FastAPI(title="CleanGraph API", version="1.0.0", dependencies=[])
 
@@ -68,6 +68,7 @@ app.include_router(graph.router)
 app.include_router(errors.router)
 app.include_router(suggestions.router)
 app.include_router(plugin.router)
+app.include_router(crawler.router)
 
 if __name__ == "__main__":
     import uvicorn

@@ -30,6 +30,11 @@ export const createGraph = (data) => {
   return axios.post("/graph", data);
 };
 
+
+export const createCrawler = (data) => {
+  return axios.post("/crawler", data);
+};
+
 export const getGraphs = () => {
   return axios.get("/graph");
 };

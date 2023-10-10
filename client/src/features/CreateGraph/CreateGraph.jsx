@@ -20,7 +20,7 @@ import Editor from "./Editor";
 import { DummyData } from "../../shared/data";
 import HelpCenterIcon from "@mui/icons-material/HelpCenter";
 import { SnackbarContext } from "../../shared/snackbarContext";
-import { getPlugins, createGraph } from "../../shared/api";
+import { getPlugins, createGraph, createCrawler } from "../../shared/api";
 
 const MAX_ONTOLOGY_ITEM_COUNT = 10;
 const INITIAL_STATE = {
@@ -30,6 +30,7 @@ const INITIAL_STATE = {
   nodeClasses: [],
   edgeClasses: [],
   models: { cm: null, edm: null },
+  url: "" 
 };
 const INITIAL_METRIC_STATE = { items: 0 };
 
@@ -43,6 +44,7 @@ const CreateGraph = () => {
   const [errors, setErrors] = useState([]);
   const [submitting, setSubmitting] = useState(false);
   const valid = errors.length === 0 && values.name !== "";
+  const urlValid = values.url !="";
   const [plugins, setPlugins] = useState();
   const { openSnackbar } = useContext(SnackbarContext);
 
@@ -64,6 +66,28 @@ const CreateGraph = () => {
       fetchPlugins();
     }
   }, [plugins]);
+
+  const handleURL = async () => {
+   try {
+    setSubmitting(true);
+    const response = await createCrawler({
+      name: values.url
+    });
+
+    if (response.status === 200) {
+
+      //call the next functionality. remove alert.
+      alert(`/${response.data}`);
+    } else {
+      throw new Error();
+    }
+  } catch (error) {
+    openSnackbar("error", "Error", `Unable to create crawler file for the inout`);
+  } finally {
+    setSubmitting(false);
+  }
+   
+  }
 
   const handleCreate = async () => {
     try {
@@ -305,6 +329,41 @@ const CreateGraph = () => {
                 </Typography>
               </Box>
             </>
+            <Box>
+
+            <Typography fontWeight={700}>Input By URL</Typography>
+            </Box>
+            <Box>
+            
+            <Tooltip
+              title="Enter Course Url"
+              placement="left"
+            >
+              <TextField
+                label="Enter Url"
+                value={values.url}
+                onChange={(e) =>
+                  setValues((prevState) => ({
+                    ...prevState,
+                    url: e.target.value,
+                  }))
+                }
+              />
+            </Tooltip>
+            </Box>
+            <Box>
+            <LoadingButton
+              variant="contained"
+              onClick={handleURL}
+              disabled={!urlValid}
+              loading={submitting}
+              disableElevation
+              sx={{ color: theme.palette.primary.light }}
+            >
+              Generate
+            </LoadingButton>
+            </Box>
+
           </Stack>
           <Box sx={{ width: "100%" }} p="0.5rem 0.5rem">
             <Editor
